@@ -53,10 +53,11 @@ async function getNextProjectNumber(ctx: any ,userId:string):Promise<number>
     const counter=await ctx.db.query("project_counters").withIndex('by_userId',(q: any )=>q.eq("userId",userId)).first()
     if(!counter)
     {
-        await ctx.db.insert("project_counters",{userId,getNextProjectNumber:2})
+        // Fix: use nextProjectNumber instead of getNextProjectNumber
+        await ctx.db.insert("project_counters",{userId, nextProjectNumber: 2})
         return 1
     }
-    const projectNumber=counter.getNextProjectNumber
-    await ctx.db.patch(counter._id,{getNextProjectNumber:projectNumber+1})
+    const projectNumber=counter.nextProjectNumber
+    await ctx.db.patch(counter._id,{nextProjectNumber: projectNumber + 1})
     return projectNumber
 }
